@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/samuel/go-thrift/parser"
+	"github.com/collinmsn/go-thrift/parser"
 )
 
 func TestSimple(t *testing.T) {
