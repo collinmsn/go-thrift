@@ -20,7 +20,8 @@ type Filesystem interface {
 }
 
 type Parser struct {
-	Filesystem Filesystem // For handling includes. Can be set to nil to fall back to os package.
+	Filesystem  Filesystem // For handling includes. Can be set to nil to fall back to os package.
+	IncludeRoot string
 }
 
 func (p *Parser) Parse(r io.Reader, opts ...Option) (*Thrift, error) {
@@ -61,7 +62,11 @@ func (p *Parser) ParseFile(filename string) (map[string]*Thrift, string, error) 
 
 		basePath := filepath.Dir(path)
 		for incName, incPath := range thrift.Includes {
-			p, err := p.abs(filepath.Join(basePath, incPath))
+			realIncPath := filepath.Join(basePath, incPath)
+			if p.IncludeRoot != "" {
+				realIncPath = filepath.Join(p.IncludeRoot, incPath)
+			}
+			p, err := p.abs(realIncPath)
 			if err != nil {
 				return nil, "", err
 			}
