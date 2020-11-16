@@ -63,7 +63,13 @@ func (p *Parser) ParseFile(filename string) (map[string]*Thrift, string, error) 
 		basePath := filepath.Dir(path)
 		for incName, incPath := range thrift.Includes {
 			realIncPath := filepath.Join(basePath, incPath)
-			if p.IncludeRoot != "" {
+			var exists bool
+			if f, err := os.Stat(realIncPath); err != nil {
+			} else if f.IsDir() {
+			} else {
+				exists = true
+			}
+			if !exists && p.IncludeRoot != "" {
 				realIncPath = filepath.Join(p.IncludeRoot, incPath)
 			}
 			p, err := p.abs(realIncPath)
